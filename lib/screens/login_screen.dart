@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center, // Changed to center
                       children: [
 
                         /// ICON
@@ -59,9 +59,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 24),
 
-                        /// HEADING
+                        /// HEADING - CENTERED
                         Text(
                           _isLogin ? 'Welcome Back 👋' : 'Create Your Account',
+                          textAlign: TextAlign.center, // Added textAlign
                           style: const TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w700,
@@ -75,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           _isLogin
                               ? 'Sign in to manage your expenses'
                               : 'Start tracking your finances effortlessly',
+                          textAlign: TextAlign.center, // Added textAlign
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey.shade600,
@@ -87,6 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Form(
                           key: _formKey,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center, // Added this
                             children: [
 
                               if (!_isLogin) ...[
@@ -137,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               const SizedBox(height: 26),
 
-                              /// BUTTON
+                              /// BUTTON - Already centered
                               SizedBox(
                                 width: double.infinity,
                                 height: 56,
@@ -211,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 18),
 
-                        /// SWITCH LOGIN / SIGNUP
+                        /// SWITCH LOGIN / SIGNUP - Already centered
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -289,6 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
       keyboardType: keyboard,
       obscureText: obscure,
       validator: validator,
+      textAlign: TextAlign.center, // Added this to center text in input field
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(

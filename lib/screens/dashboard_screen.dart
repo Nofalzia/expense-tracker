@@ -35,67 +35,70 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          // Modern App Bar
+          // Clean App Bar
           SliverAppBar(
             floating: true,
             snap: true,
             elevation: 0,
             backgroundColor: Colors.white,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Dashboard',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
+            titleSpacing: 20,
+            toolbarHeight: 90,
+            title: Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Dashboard',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 27,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  authProvider.userName ?? 'Welcome back',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
+                  SizedBox(height: 4),
+                  Text(
+                    authProvider.userName ?? 'Welcome back',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.analytics_outlined, color: Colors.black87),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/analytics');
-                },
+              Padding(
+                padding: const EdgeInsets.only(right: 12, top: 8),
+                child: IconButton(
+                  icon: Icon(Icons.analytics_outlined, color: Colors.black87, size: 24),
+                  onPressed: () => Navigator.pushNamed(context, '/analytics'),
+                ),
               ),
-              IconButton(
-                icon: Icon(Icons.logout, color: Colors.black87),
-                onPressed: () {
-                  authProvider.logout();
-                  Navigator.pushReplacementNamed(context, '/');
-                },
+              Padding(
+                padding: const EdgeInsets.only(right: 16, top: 8),
+                child: IconButton(
+                  icon: Icon(Icons.logout, color: Colors.black87, size: 24),
+                  onPressed: () {
+                    authProvider.logout();
+                    Navigator.pushReplacementNamed(context, '/');
+                  },
+                ),
               ),
             ],
-            centerTitle: false,
           ),
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Balance Card
                   _buildBalanceCard(transactionProvider),
-                  SizedBox(height: 24),
-
-                  // Period Selector
+                  SizedBox(height: 28),
                   _buildPeriodSelector(),
-                  SizedBox(height: 24),
-
-                  // Income/Expense Cards
+                  SizedBox(height: 28),
                   _buildStatsCards(transactionProvider),
                   SizedBox(height: 32),
 
@@ -106,47 +109,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Text(
                         'Recent Transactions',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 17,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/transactions');
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                'View All',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.primary,
-                                ),
+                        onTap: () => Navigator.pushNamed(context, '/transactions'),
+                        child: Row(
+                          children: [
+                            Text(
+                              'View All',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primary,
                               ),
-                              SizedBox(width: 4),
-                              Icon(Icons.arrow_forward, size: 14, color: AppColors.primary),
-                            ],
-                          ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_forward, size: 14, color: AppColors.primary),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 18),
 
-                  // Transactions List or Empty State
+                  // If empty show empty state
                   if (transactionProvider.transactions.isEmpty)
                     _buildEmptyState()
                   else
                     _buildTransactionList(transactionProvider),
-                  
+
                   SizedBox(height: 40),
                 ],
               ),
@@ -154,30 +148,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
+
+      // FAB
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/add-transaction');
-        },
         backgroundColor: AppColors.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Icon(Icons.add, color: Colors.white, size: 24),
+        onPressed: () => Navigator.pushNamed(context, '/add-transaction'),
       ),
     );
   }
 
+  // ============================
+  // BALANCE CARD
+  // ============================
   Widget _buildBalanceCard(TransactionProvider provider) {
     final balance = provider.balance;
     final isPositive = balance >= 0;
 
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(26),
       decoration: BoxDecoration(
-        color: isPositive ? AppColors.income.withOpacity(0.08) : AppColors.expense.withOpacity(0.08),
+        color: isPositive ? AppColors.income.withOpacity(0.07) : AppColors.expense.withOpacity(0.07),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isPositive ? AppColors.income.withOpacity(0.2) : AppColors.expense.withOpacity(0.2),
+          color: isPositive ? AppColors.income.withOpacity(0.18) : AppColors.expense.withOpacity(0.18),
         ),
       ),
       child: Column(
@@ -186,44 +181,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             'Total Balance',
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 14,
               color: Colors.grey.shade600,
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '\$${balance.abs().toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 35,
+                  fontWeight: FontWeight.w800,
                   color: isPositive ? AppColors.income : AppColors.expense,
-                  letterSpacing: -0.5,
+                  letterSpacing: -0.7,
                 ),
               ),
               Container(
-                width: 48,
-                height: 48,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
-                  color: isPositive ? AppColors.income.withOpacity(0.15) : AppColors.expense.withOpacity(0.15),
+                  color: (isPositive ? AppColors.income : AppColors.expense).withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   isPositive ? Icons.trending_up : Icons.trending_down,
-                  size: 24,
                   color: isPositive ? AppColors.income : AppColors.expense,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 14),
           Text(
-            isPositive ? 'Your finances are looking good!' : 'Time to review your spending',
+            isPositive ? 'Your finances look good' : 'Review your spending',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13.5,
               color: Colors.grey.shade600,
             ),
           ),
@@ -232,36 +226,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // ============================
+  // PERIOD SELECTOR
+  // ============================
   Widget _buildPeriodSelector() {
     final periods = ['This Month', 'This Week', 'This Year'];
-    
+
     return Container(
       padding: EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         children: periods.asMap().entries.map((entry) {
           final index = entry.key;
           final period = entry.value;
           final isSelected = _selectedPeriod == index;
-          
+
           return Expanded(
             child: GestureDetector(
               onTap: () => setState(() => _selectedPeriod = index),
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(vertical: 11),
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: isSelected ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 12,
-                      offset: Offset(0, 2),
-                    ),
-                  ] : null,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.06),
+                            blurRadius: 10,
+                            offset: Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: Center(
                   child: Text(
@@ -281,6 +280,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // ============================
+  // STATS CARDS
+  // ============================
   Widget _buildStatsCards(TransactionProvider provider) {
     return Row(
       children: [
@@ -292,7 +294,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: Icons.arrow_downward,
           ),
         ),
-        SizedBox(width: 12),
+        SizedBox(width: 14),
         Expanded(
           child: _buildStatItem(
             title: 'Expenses',
@@ -314,9 +316,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withOpacity(0.07),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withOpacity(0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,13 +327,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                width: 40,
-                height: 40,
+                height: 42,
+                width: 42,
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, size: 20, color: color),
+                child: Icon(icon, color: color, size: 20),
               ),
               Text(
                 '\$${amount.toStringAsFixed(0)}',
@@ -343,11 +345,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          SizedBox(height: 10),
           Text(
             title,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13.5,
               fontWeight: FontWeight.w500,
               color: Colors.grey.shade600,
             ),
@@ -357,6 +359,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // ============================
+  // TRANSACTION LIST
+  // ============================
   Widget _buildTransactionList(TransactionProvider provider) {
     final recentTransactions = provider.recentTransactions;
 
@@ -369,7 +374,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildTransactionItem(TransactionModel transaction) {
     final color = transaction.isExpense ? AppColors.expense : AppColors.income;
-    
+
     return Dismissible(
       key: Key(transaction.id ?? '${transaction.title}-${transaction.date}'),
       direction: DismissDirection.endToStart,
@@ -387,53 +392,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Text(
-              'Delete Transaction',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            content: Text('Are you sure you want to delete "${transaction.title}"?'),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text('Delete Transaction', style: TextStyle(fontWeight: FontWeight.w600)),
+            content: Text('Delete "${transaction.title}"?'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
+                onPressed: () => Navigator.pop(context, false),
                 child: Text('Cancel', style: TextStyle(color: Colors.grey.shade600)),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () => Navigator.pop(context, true),
                 child: Text('Delete', style: TextStyle(color: AppColors.expense)),
               ),
             ],
           ),
         );
       },
-      onDismissed: (direction) {
-        final transactionProvider = Provider.of<TransactionProvider>(context, listen: false);
-        transactionProvider.deleteTransaction(transaction.id!);
-        
+      onDismissed: (_) {
+        Provider.of<TransactionProvider>(context, listen: false)
+            .deleteTransaction(transaction.id!);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Transaction deleted'),
             backgroundColor: AppColors.expense,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
           ),
         );
       },
       child: GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            '/add-transaction',
-            arguments: transaction,
-          );
-        },
+        onTap: () => Navigator.pushNamed(context, '/add-transaction', arguments: transaction),
         child: Container(
           margin: EdgeInsets.only(bottom: 12),
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(18),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -451,10 +443,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Icon(
                   transaction.isExpense ? Icons.arrow_upward : Icons.arrow_downward,
                   color: AppColors.getCategoryColor(transaction.category),
-                  size: 20,
                 ),
               ),
               SizedBox(width: 16),
+
+              // Title + Category/date
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -467,7 +460,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(height: 3),
                     Text(
                       '${transaction.category} • ${transaction.formattedDate}',
                       style: TextStyle(
@@ -478,6 +471,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
               ),
+
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -491,9 +485,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   SizedBox(height: 4),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -514,37 +508,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // ============================
+  // EMPTY STATE
+  // ============================
   Widget _buildEmptyState() {
     return Container(
-      padding: EdgeInsets.all(32),
+      padding: EdgeInsets.all(40),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
-          SizedBox(height: 16),
+          Icon(Icons.receipt_long_outlined, size: 62, color: Colors.grey.shade400),
+          SizedBox(height: 14),
           Text(
             'No transactions yet',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade700,
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 6),
           Text(
             'Add your first transaction to get started',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],
       ),
