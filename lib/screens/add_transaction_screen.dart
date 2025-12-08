@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
+import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/utils/colors.dart';
 
 class AddTransactionScreen extends StatefulWidget {
+  final TransactionModel? transactionToEdit;
+
+  const AddTransactionScreen({Key? key, this.transactionToEdit}) : super(key: key);
+
   @override
   _AddTransactionScreenState createState() => _AddTransactionScreenState();
 }
@@ -23,6 +28,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     'Bills', 'Healthcare', 'Education', 'Other', 'Income'
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    
+    // If editing, populate fields
+    if (widget.transactionToEdit != null) {
+      final transaction = widget.transactionToEdit!;
+      _titleController.text = transaction.title;
+      _amountController.text = transaction.amount.toString();
+      _isExpense = transaction.isExpense;
+      _selectedCategory = transaction.category;
+      _selectedDate = transaction.date;
+      _noteController.text = transaction.note ?? '';
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -37,35 +58,62 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final transactionProvider = Provider.of<TransactionProvider>(context, listen: false);
       
-      // Generate a unique ID (in real app, Firebase will do this)
-      final id = DateTime.now().millisecondsSinceEpoch.toString();
-      
-      // Add the transaction
-      transactionProvider.addTransaction(
-        Transaction(
-          id: id,
-          title: _titleController.text,
-          amount: double.parse(_amountController.text),
-          date: _selectedDate,
-          category: _selectedCategory,
-          isExpense: _isExpense,
-        ),
+      final transaction = TransactionModel(
+        title: _titleController.text,
+        amount: double.parse(_amountController.text),
+        date: _selectedDate,
+        category: _selectedCategory,
+        isExpense: _isExpense,
+        note: _noteController.text.isNotEmpty ? _noteController.text : null,
       );
       
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Transaction added successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      
-      // Navigate back
-      Navigator.pop(context);
+      try {
+        if (widget.transactionToEdit != null) {
+          // Update existing transaction
+          await transactionProvider.updateTransaction(
+            widget.transactionToEdit!.id!,
+            widget.transactionToEdit!.copyWith(
+              title: _titleController.text,
+              amount: double.parse(_amountController.text),
+              date: _selectedDate,
+              category: _selectedCategory,
+              isExpense: _isExpense,
+              note: _noteController.text,
+            ),
+          );
+        } else {
+          // Add new transaction
+          await transactionProvider.addTransaction(transaction);
+        }
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              widget.transactionToEdit != null 
+                ? 'Transaction updated successfully!' 
+                : 'Transaction added successfully!'
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
+        // Navigate back
+        Navigator.pop(context);
+        
+      } catch (e) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -74,7 +122,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Add Transaction'),
+        title: Text(widget.transactionToEdit != null ? 'Edit Transaction' : 'Add Transaction'),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -93,7 +141,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               // Type Toggle
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(

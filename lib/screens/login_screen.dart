@@ -163,8 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 );
                                               }
 
-                                              Navigator.pushReplacementNamed(
-                                                  context, '/dashboard');
+                                              
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(

@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:expense_tracker/screens/login_screen.dart';
 import 'package:expense_tracker/screens/dashboard_screen.dart';
 import 'package:expense_tracker/screens/add_transaction_screen.dart';
+import 'package:expense_tracker/screens/transaction_list_screen.dart';
+import 'package:expense_tracker/screens/analytics_screen.dart';
+import 'package:expense_tracker/screens/profile_screen.dart';
 import 'package:expense_tracker/providers/auth_provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:expense_tracker/firebase_config.dart';
@@ -29,7 +32,6 @@ void main() async {
     }
   } catch (e) {
     print('Firebase initialization error: $e');
-    // Continue without Firebase for now
   }
   
   runApp(MyApp());
@@ -47,46 +49,48 @@ class MyApp extends StatelessWidget {
         title: 'Expense Tracker',
         theme: ThemeData(
           primaryColor: Color(0xFF4A6CF7),
-          scaffoldBackgroundColor: Color(0xFFF7F8FA),
+          scaffoldBackgroundColor: Colors.white,
           fontFamily: 'Inter',
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.white,
             elevation: 0,
             iconTheme: IconThemeData(color: Colors.black),
-            titleTextStyle: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF4A6CF7),
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
         ),
-        initialRoute: '/',
+        home: AuthWrapper(), // Changed from initialRoute to home
         routes: {
-          '/': (context) => LoginScreen(),
           '/dashboard': (context) => DashboardScreen(),
           '/add-transaction': (context) => AddTransactionScreen(),
+          '/transactions': (context) => TransactionListScreen(),
+          '/analytics': (context) => AnalyticsScreen(),
+          '/profile': (context) => ProfileScreen(),
         },
         debugShowCheckedModeBanner: false,
       ),
     );
+  }
+}
+
+// Add this AuthWrapper widget
+class AuthWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    
+    // Show loading indicator while checking auth state
+    if (authProvider.isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    
+    // Check if user is logged in
+    if (authProvider.isLoggedIn) {
+      return DashboardScreen(); // User is logged in, show dashboard
+    } else {
+      return LoginScreen(); // User is not logged in, show login
+    }
   }
 }
