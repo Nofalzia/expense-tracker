@@ -18,8 +18,8 @@ dependencies:
   firebase_core: ^2.24.2
   
   # Firebase Services (works on Android, iOS, Web)
-  firebase_auth: ^4.16.1
-  cloud_firestore: ^4.15.2
+  firebase_auth: ^4.13.0
+  cloud_firestore: ^4.14.0
   firebase_storage: ^11.3.1  # Optional, for images
   
   # State Management
@@ -43,6 +43,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # Optional: Add assets if needed
-  # assets:
-  #   - images/
+  assets:
+    - assets/untitled.png

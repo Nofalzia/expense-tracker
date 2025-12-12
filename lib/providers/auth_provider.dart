@@ -8,22 +8,48 @@ class AuthProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   
   User? _user;
-  bool _isLoading = false;
+  bool _isLoading = true; // Start as true for initial check
+  bool _isInitialized = false;
   String? _errorMessage;
 
   User? get user => _user;
   bool get isLoading => _isLoading;
-  bool get isLoggedIn => _user != null; // Changed this line
+  bool get isLoggedIn => _user != null;
+  bool get isInitialized => _isInitialized; // Add this getter
   String? get errorMessage => _errorMessage;
   String? get userEmail => _user?.email;
   String? get userName => _user?.displayName;
 
   AuthProvider() {
-    // Listen to auth state changes
-    _authService.authStateChanges.listen((User? user) {
-      _user = user;
+    _initializeAuth();
+  }
+
+  /// Initialize auth state
+  void _initializeAuth() async {
+    _isLoading = true;
+    notifyListeners();
+    
+    try {
+      // Get current user immediately
+      _user = _authService.currentUser;
+      
+      // Then listen to changes
+      _authService.authStateChanges.listen((User? user) {
+        _user = user;
+        _isInitialized = true;
+        notifyListeners();
+      });
+      
+    } catch (e) {
+      print('❌ Auth initialization error: $e');
+      _errorMessage = e.toString();
+    } finally {
+      // Wait a bit before setting isLoading to false
+      await Future.delayed(Duration(milliseconds: 500));
+      _isLoading = false;
+      _isInitialized = true;
       notifyListeners();
-    });
+    }
   }
 
   /// Login with Firebase
@@ -35,6 +61,7 @@ class AuthProvider with ChangeNotifier {
     try {
       final user = await _authService.signInWithEmailAndPassword(email, password);
       if (user != null) {
+        _user = user; // Update user immediately
         print('✅ Firebase login successful: ${user.email}');
       }
     } catch (e) {
@@ -62,6 +89,7 @@ class AuthProvider with ChangeNotifier {
       
       // Create user document in Firestore
       if (user != null) {
+        _user = user; // Update user immediately
         await _createUserDocument(user.uid, email, name);
         print('✅ Firebase signup successful: ${user.email}');
       }
@@ -93,6 +121,9 @@ class AuthProvider with ChangeNotifier {
 
   /// Logout
   Future<void> logout() async {
+    _isLoading = true;
+    notifyListeners();
+    
     try {
       await _authService.signOut();
       _user = null;
@@ -102,6 +133,7 @@ class AuthProvider with ChangeNotifier {
       print('❌ Logout error: $_errorMessage');
       rethrow;
     } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }

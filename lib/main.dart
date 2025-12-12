@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:expense_tracker/screens/intro_screen.dart';
 import 'package:expense_tracker/screens/login_screen.dart';
 import 'package:expense_tracker/screens/dashboard_screen.dart';
 import 'package:expense_tracker/screens/add_transaction_screen.dart';
@@ -57,8 +58,10 @@ class MyApp extends StatelessWidget {
             iconTheme: IconThemeData(color: Colors.black),
           ),
         ),
-        home: AuthWrapper(), // Changed from initialRoute to home
+        home: AuthWrapper(),
         routes: {
+          '/intro': (context) => IntroScreen(),
+          '/login': (context) => LoginScreen(),
           '/dashboard': (context) => DashboardScreen(),
           '/add-transaction': (context) => AddTransactionScreen(),
           '/transactions': (context) => TransactionListScreen(),
@@ -71,26 +74,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Add this AuthWrapper widget
 class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     
-    // Show loading indicator while checking auth state
+    // Show loading screen while checking auth
     if (authProvider.isLoading) {
       return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 20),
+              Text(
+                'Loading...',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  color: Colors.black54,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
     
-    // Check if user is logged in
+    // Auth is initialized, check if user is logged in
     if (authProvider.isLoggedIn) {
-      return DashboardScreen(); // User is logged in, show dashboard
+      print('🎯 User is logged in: ${authProvider.userEmail}');
+      return DashboardScreen();
     } else {
-      return LoginScreen(); // User is not logged in, show login
+      print('🎯 User is not logged in, showing intro');
+      return IntroScreen();
     }
   }
 }

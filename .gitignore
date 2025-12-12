@@ -1,8 +1,13 @@
-# Firebase/API keys
+# Firebase/API keys - NEVER COMMIT THESE!
+lib/firebase_config.dart
+lib/firebase_options.dart
+firebase_config.dart
+firebase_options.dart
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
-lib/firebase_config.dart
-firebase_config.dart
+.env
+.env.local
+*.keystore
 
 # Flutter/Dart
 .dart_tool/
@@ -30,10 +35,6 @@ build/
 
 # Web
 /web/
-
-# Environment
-.env
-.env.local
 
 # IDE
 .vscode/
