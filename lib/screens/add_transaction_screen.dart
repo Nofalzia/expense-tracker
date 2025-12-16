@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:expense_tracker/models/transaction.dart';
@@ -142,14 +143,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
         title: Text(
           widget.transactionToEdit != null ? 'Edit Transaction' : 'Add Transaction',
-          style: const TextStyle(
-            fontSize: 18,
+          style: GoogleFonts.poppins(
+            fontSize: 25,
             fontWeight: FontWeight.w600,
-            color: Colors.black,
+            color: Colors.black87,
+            letterSpacing: -0.75
           ),
         ),
         backgroundColor: Colors.white,
@@ -157,13 +159,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          color: Colors.black,
+          icon: const Icon(Icons.chevron_left_rounded, size: 28),
+          color: Colors.black87,
         ),
         actions: [
           IconButton(
             onPressed: _submitForm,
-            icon: const Icon(Icons.check_rounded, size: 24),
+            icon: const Icon(Icons.check_rounded, size: 28),
             color: AppColors.primary,
           ),
         ],
@@ -218,10 +220,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   Widget _buildSectionLabel(String text) {
     return Text(
       text,
-      style: const TextStyle(
+      style: GoogleFonts.poppins(
         fontSize: 13,
-        fontWeight: FontWeight.w500,
-        color: Color(0xFF7A7A7A),
+        fontWeight: FontWeight.w400,
+        color: Colors.grey.shade600,
         letterSpacing: -0.2,
       ),
     );
@@ -232,7 +234,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       height: 64,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: const Color(0xFFE5E5E5)),
       ),
       child: Row(
@@ -250,8 +252,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 curve: Curves.easeInOut,
                 margin: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: _isExpense ? AppColors.expense.withOpacity(0.12) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
+                  color: _isExpense ? AppColors.expense.withOpacity(0.08) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  border: _isExpense 
+                      ? Border.all(color: AppColors.expense.withOpacity(0.2))
+                      : null,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -259,12 +264,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     Icon(
                       Icons.arrow_upward_rounded,
                       color: _isExpense ? AppColors.expense : const Color(0xFFACACAC),
-                      size: 20,
+                      size: 24,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       'Expense',
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: _isExpense ? AppColors.expense : const Color(0xFFACACAC),
@@ -288,8 +293,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 curve: Curves.easeInOut,
                 margin: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: !_isExpense ? AppColors.income.withOpacity(0.12) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
+                  color: !_isExpense ? AppColors.income.withOpacity(0.08) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  border: !_isExpense 
+                      ? Border.all(color: AppColors.income.withOpacity(0.2))
+                      : null,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -297,12 +305,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     Icon(
                       Icons.arrow_downward_rounded,
                       color: !_isExpense ? AppColors.income : const Color(0xFFACACAC),
-                      size: 20,
+                      size: 24,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       'Income',
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: !_isExpense ? AppColors.income : const Color(0xFFACACAC),
@@ -322,31 +330,31 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: const Color(0xFFE5E5E5)),
       ),
       child: TextFormField(
         controller: _amountController,
         keyboardType: TextInputType.numberWithOptions(decimal: true),
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          color: Colors.black,
+        style: GoogleFonts.poppins(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           prefixText: '\$ ',
-          prefixStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF7A7A7A),
+          prefixStyle: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade600,
           ),
           hintText: '0.00',
-          hintStyle: TextStyle(
-            fontSize: 18,
+          hintStyle: GoogleFonts.poppins(
+            fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: Color(0xFFACACAC),
+            color: Colors.grey.shade400,
           ),
         ),
         validator: (value) {
@@ -366,22 +374,24 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: const Color(0xFFE5E5E5)),
       ),
       child: TextFormField(
         controller: _titleController,
-        style: const TextStyle(
+        style: GoogleFonts.poppins(
           fontSize: 15,
-          color: Colors.black,
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           hintText: 'Enter transaction title',
-          hintStyle: TextStyle(
+          hintStyle: GoogleFonts.poppins(
             fontSize: 15,
-            color: Color(0xFFACACAC),
+            fontWeight: FontWeight.w400,
+            color: Colors.grey.shade400,
           ),
         ),
         validator: (value) {
@@ -398,7 +408,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: const Color(0xFFE5E5E5)),
       ),
       child: DropdownButtonHideUnderline(
@@ -406,15 +416,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           value: _selectedCategory,
           isExpanded: true,
           icon: const Icon(Icons.expand_more_rounded, color: Color(0xFF7A7A7A)),
-          style: const TextStyle(
+          style: GoogleFonts.poppins(
             fontSize: 15,
-            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
           ),
           items: _categories.map((category) {
             return DropdownMenuItem<String>(
               value: category,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   children: [
                     Container(
@@ -447,10 +458,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       onTap: () => _selectDate(context),
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: const Color(0xFFE5E5E5)),
         ),
         child: Row(
@@ -463,17 +474,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             const SizedBox(width: 12),
             Text(
               '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-              style: const TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 15,
-                color: Colors.black,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
               ),
             ),
             const Spacer(),
             Text(
               'Change',
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: AppColors.primary,
               ),
             ),
@@ -487,23 +499,25 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: const Color(0xFFE5E5E5)),
       ),
       child: TextFormField(
         controller: _noteController,
         maxLines: 4,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
+        style: GoogleFonts.poppins(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.all(16),
+          contentPadding: EdgeInsets.all(20),
           hintText: 'Add any additional notes...',
-          hintStyle: TextStyle(
-            fontSize: 14,
-            color: Color(0xFFACACAC),
+          hintStyle: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.grey.shade400,
           ),
         ),
       ),

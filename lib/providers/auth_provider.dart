@@ -120,23 +120,29 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Logout
-  Future<void> logout() async {
-    _isLoading = true;
-    notifyListeners();
+Future<void> logout() async {
+  _isLoading = true;
+  notifyListeners();
+  
+  try {
+    await _authService.signOut();
+    _user = null;
     
-    try {
-      await _authService.signOut();
-      _user = null;
-      print('✅ User logged out');
-    } catch (e) {
-      _errorMessage = _getErrorMessage(e);
-      print('❌ Logout error: $_errorMessage');
-      rethrow;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    // ADD THIS: Clear all provider state
+    print('✅ User logged out - clearing state');
+    
+    // Optional: If you're using Firebase Auth, this helps
+    await FirebaseAuth.instance.signOut();
+    
+  } catch (e) {
+    _errorMessage = _getErrorMessage(e);
+    print('❌ Logout error: $_errorMessage');
+    rethrow;
+  } finally {
+    _isLoading = false;
+    notifyListeners();
   }
+}
 
   /// Send password reset email
   Future<void> resetPassword(String email) async {

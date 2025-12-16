@@ -1,6 +1,8 @@
+import 'dart:async'; 
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/services/firestore_service.dart';
 import 'package:expense_tracker/models/transaction.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TransactionProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
@@ -9,56 +11,59 @@ class TransactionProvider with ChangeNotifier {
   bool _isLoading = false;
   DateTime _selectedMonth = DateTime.now();
   bool _initialized = false;
+  StreamSubscription<List<TransactionModel>>? _transactionSubscription;
 
   List<TransactionModel> get transactions => _transactions;
   bool get isLoading => _isLoading;
   DateTime get selectedMonth => _selectedMonth;
   bool get isInitialized => _initialized;
 
-  // Listen to transactions stream
+  // Get current user ID
+  String? get _currentUserId {
+    return FirebaseAuth.instance.currentUser?.uid;
+  }
+
+  // Listen to transactions stream for selected month
   void startListening() {
     print('🎯 Starting to listen to Firestore stream...');
     
-    _firestoreService.getTransactionsStream().listen(
+    final userId = _currentUserId;
+    if (userId == null) {
+      print('❌ No user logged in');
+      return;
+    }
+    
+    // Cancel existing subscription if any
+    _transactionSubscription?.cancel();
+    
+    _isLoading = true;
+    notifyListeners();
+
+    print('📅 Listening for month: ${_selectedMonth.month}/${_selectedMonth.year}');
+    
+    _transactionSubscription = _firestoreService
+        .getTransactionsForMonth(userId, _selectedMonth)
+        .listen(
       (transactions) {
         print('✅ Received ${transactions.length} transactions from stream');
         _transactions = transactions;
+        _isLoading = false;
         notifyListeners();
       },
       onError: (error) {
         print('❌ Stream error: $error');
+        _isLoading = false;
+        notifyListeners();
       },
-      onDone: () {
-        print('🏁 Stream closed');
-      },
-      cancelOnError: false,
     );
   }
 
   // Set selected month
   void setSelectedMonth(DateTime month) {
     _selectedMonth = DateTime(month.year, month.month);
+    print('📅 Month changed to ${_selectedMonth.month}/${_selectedMonth.year}');
     notifyListeners();
-    _loadTransactionsForMonth();
-  }
-
-  // Load transactions for selected month
-  Future<void> _loadTransactionsForMonth() async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final stream = _firestoreService.getTransactionsForMonth(_selectedMonth);
-      stream.listen((transactions) {
-        _transactions = transactions;
-        _isLoading = false;
-        notifyListeners();
-      });
-    } catch (e) {
-      _isLoading = false;
-      notifyListeners();
-      rethrow;
-    }
+    startListening(); // Restart listening with new month filter
   }
 
   // Add transaction
@@ -112,7 +117,7 @@ class TransactionProvider with ChangeNotifier {
     }
   }
 
-  // Calculate totals
+  // Calculate totals for current month
   double get totalIncome {
     return _transactions
         .where((t) => !t.isExpense)
@@ -129,12 +134,14 @@ class TransactionProvider with ChangeNotifier {
     return totalIncome - totalExpenses;
   }
 
-  // Get recent transactions (last 5)
+  // Get recent transactions (last 5) sorted by date
   List<TransactionModel> get recentTransactions {
+    // Since transactions are already ordered by date descending from Firestore
+    // We can just take the first 5
     return _transactions.take(5).toList();
   }
 
-  // Get transactions by category
+  // Get transactions by category for current month
   Map<String, double> get categoryTotals {
     final Map<String, double> totals = {};
     
@@ -146,6 +153,24 @@ class TransactionProvider with ChangeNotifier {
     return totals;
   }
 
+  // Get transactions for a specific category
+  List<TransactionModel> getTransactionsByCategory(String category) {
+    return _transactions.where((t) => 
+      t.category == category && 
+      t.isExpense
+    ).toList();
+  }
+
+  // Get all transactions (unfiltered) - for export or analytics
+  Future<List<TransactionModel>> getAllTransactions() async {
+    final userId = _currentUserId;
+    if (userId == null) return [];
+
+    // This would need a new method in FirestoreService
+    // For now, we'll just return current month's transactions
+    return _transactions;
+  }
+
   // Initialize
   void initialize() {
     if (!_initialized) {
@@ -153,5 +178,17 @@ class TransactionProvider with ChangeNotifier {
       startListening();
       _initialized = true;
     }
+  }
+
+  // Force refresh
+  void refresh() {
+    startListening();
+  }
+
+  // Clean up resources
+  @override
+  void dispose() {
+    _transactionSubscription?.cancel();
+    super.dispose();
   }
 }

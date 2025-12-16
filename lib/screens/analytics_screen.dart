@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:expense_tracker/utils/colors.dart';
 
@@ -20,7 +21,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final categoryTotals = transactionProvider.categoryTotals;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF6F7FB),
       body: CustomScrollView(
         slivers: [
           // Modern App Bar
@@ -31,19 +32,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             backgroundColor: Colors.white,
             title: Text(
               'Analytics',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
+              style: GoogleFonts.poppins(
+                color: Colors.black87,
+                fontSize: 30,
+                fontWeight: FontWeight.w500, // GOOD: Big text lighter
                 letterSpacing: -0.5,
               ),
             ),
-            centerTitle: false,
+            centerTitle: true,
           ),
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -51,26 +52,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
                   // Month Selector - Minimal
                   _buildMonthSelector(),
-                  SizedBox(height: 32),
-
-                  // Financial Overview
-                  Text(
-                    'Financial Overview',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-
-                  // Income/Expense Toggle
-                  _buildTypeToggle(),
                   SizedBox(height: 24),
-
-                  // Main Stats Card
-                  _buildMainStatsCard(transactionProvider),
-                  SizedBox(height: 32),
 
                   // Category Breakdown Header
                   Row(
@@ -78,9 +60,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     children: [
                       Text(
                         'Category Breakdown',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600, // GOOD: Section header at w600
                           color: Colors.black87,
                         ),
                       ),
@@ -92,29 +74,48 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         ),
                         child: Text(
                           'This Month',
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w500, // GOOD: Buttons/actions at w500/w600
                             color: AppColors.primary,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 16),
 
                   // Pie Chart or Empty State
                   if (categoryTotals.isNotEmpty)
                     _buildPieChart(categoryTotals)
                   else
                     _buildEmptyState(),
-                  SizedBox(height: 32),
+                  SizedBox(height: 24),
 
                   // Top Categories
                   if (categoryTotals.isNotEmpty) ...[
                     _buildCategoryList(categoryTotals),
-                    SizedBox(height: 40),
+                    SizedBox(height: 32),
                   ],
+
+                  // Income/Expense Toggle
+                  _buildTypeToggle(),
+                  SizedBox(height: 20),
+
+                  // Financial Overview - Moved to bottom
+                  Text(
+                    'Financial Overview',
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600, // GOOD: Section header at w600
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Main Stats Card
+                  _buildMainStatsCard(transactionProvider),
+                  SizedBox(height: 40),
                 ],
               ),
             ),
@@ -165,18 +166,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             children: [
               Text(
                 _getMonthName(_selectedMonth),
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w600, // GOOD: Medium text can be bolder
                   color: Colors.black87,
                 ),
               ),
               SizedBox(height: 2),
               Text(
                 '$_selectedYear',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 13,
                   color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w400, // GOOD: Metadata at w400
                 ),
               ),
             ],
@@ -243,8 +245,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 child: Center(
                   child: Text(
                     'Income',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600, // GOOD: Button text at w600
                       color: _showIncome ? AppColors.income : Colors.grey.shade600,
                     ),
                   ),
@@ -274,8 +276,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 child: Center(
                   child: Text(
                     'Expenses',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600, // GOOD: Button text at w600
                       color: !_showIncome ? AppColors.expense : Colors.grey.shade600,
                     ),
                   ),
@@ -311,20 +313,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 children: [
                   Text(
                     type,
-                    style: TextStyle(
-                      fontSize: 15,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
                       color: Colors.grey.shade600,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400, // GOOD: Label at w400
                     ),
                   ),
                   SizedBox(height: 6),
                   Text(
                     '\$${amount.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w700,
+                    style: GoogleFonts.poppins(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w600, // GOOD: Big number at w600 (not w700)
                       color: color,
-                      letterSpacing: -0.5,
+                      letterSpacing: -0.8,
                     ),
                   ),
                 ],
@@ -354,16 +356,17 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             children: [
               Text(
                 'Total ${type.toLowerCase()}',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 13,
                   color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w400, // GOOD: Metadata at w400
                 ),
               ),
               Text(
                 '${(amount > 0 ? (amount / (amount + 1000) * 100) : 0).toStringAsFixed(1)}% of total',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500, // GOOD: Slightly emphasized metadata
                   color: color,
                 ),
               ),
@@ -439,17 +442,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   children: [
                     Text(
                       '\$${categoryTotals.values.fold(0.0, (sum, value) => sum + value).toStringAsFixed(0)}',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
+                      style: GoogleFonts.poppins(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w600, // GOOD: Big number at w600
                         color: Colors.black87,
+                        letterSpacing: -0.8,
                       ),
                     ),
                     Text(
                       'Total',
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
                         color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w400, // GOOD: Label at w400
                       ),
                     ),
                   ],
@@ -480,9 +485,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             padding: EdgeInsets.all(24),
             child: Text(
               'Top Categories',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+              style: GoogleFonts.poppins(
+                fontSize: 22,
+                fontWeight: FontWeight.w600, // GOOD: Section header at w600
                 color: Colors.black87,
               ),
             ),
@@ -513,9 +518,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       children: [
                         Text(
                           entry.key,
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                             fontSize: 15,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w500, // GOOD: Category name at w500
                             color: Colors.black87,
                           ),
                         ),
@@ -536,18 +541,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     children: [
                       Text(
                         '\$${entry.value.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600, // GOOD: Amount should win visually at w600
                           color: Colors.black87,
                         ),
                       ),
                       SizedBox(height: 2),
                       Text(
                         '${percentage.toStringAsFixed(1)}%',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w400, // GOOD: Percentage as metadata at w400
                         ),
                       ),
                     ],
@@ -581,9 +587,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           SizedBox(height: 16),
           Text(
             'No spending data yet',
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w600, // GOOD: Medium text can be bolder
               color: Colors.grey.shade700,
             ),
           ),
@@ -591,9 +597,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           Text(
             'Add expenses to see category breakdown',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               fontSize: 14,
               color: Colors.grey.shade500,
+              fontWeight: FontWeight.w400, // GOOD: Subtitle at w400
             ),
           ),
         ],

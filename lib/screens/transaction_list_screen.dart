@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
 import 'package:expense_tracker/models/transaction.dart';
@@ -33,105 +34,107 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
-        title: Text('All Transactions'),
+        title: Text(
+          'All Transactions',
+          style: GoogleFonts.poppins(
+            fontSize: 25,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+            letterSpacing: -0.75
+          ),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.chevron_left_rounded, size: 28),
+          color: Colors.black87,
+        ),
       ),
       body: Column(
         children: [
           // Search Bar
           Padding(
-            padding: EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search transactions...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFE5E5E5)),
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
+              child: TextField(
+                controller: _searchController,
+                style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Search transactions...',
+                  hintStyle: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey.shade400,
+                  ),
+                  prefixIcon: const Icon(Icons.search_rounded, color: Colors.grey),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+              ),
             ),
           ),
           
           // Filter Chips
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                FilterChip(
-                  label: Text('All'),
-                  selected: _selectedFilter == 'all',
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedFilter = 'all';
-                    });
-                  },
-                ),
-                SizedBox(width: 8),
-                FilterChip(
-                  label: Text('Income'),
-                  selected: _selectedFilter == 'income',
-                  selectedColor: AppColors.income.withOpacity(0.2),
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedFilter = 'income';
-                    });
-                  },
-                ),
-                SizedBox(width: 8),
-                FilterChip(
-                  label: Text('Expense'),
-                  selected: _selectedFilter == 'expense',
-                  selectedColor: AppColors.expense.withOpacity(0.2),
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedFilter = 'expense';
-                    });
-                  },
-                ),
+                _buildFilterChip('All', 'all'),
+                const SizedBox(width: 8),
+                _buildFilterChip('Income', 'income'),
+                const SizedBox(width: 8),
+                _buildFilterChip('Expense', 'expense'),
               ],
             ),
           ),
           
-          SizedBox(height: 16),
+          const SizedBox(height: 20),
           
           // Transactions Count
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   '${filteredTransactions.length} transactions',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey.shade600,
                   ),
                 ),
                 Text(
                   'Total: \$${_calculateTotal(filteredTransactions).toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
                   ),
                 ),
               ],
             ),
           ),
           
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           
           // Transactions List
           Expanded(
@@ -141,23 +144,24 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.receipt,
+                          Icons.receipt_long_outlined,
                           size: 64,
                           color: Colors.grey.shade400,
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
                           'No transactions found',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey.shade600,
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
                           ),
                         ),
                       ],
                     ),
                   )
                 : ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemCount: filteredTransactions.length,
                     itemBuilder: (context, index) {
                       final transaction = filteredTransactions[index];
@@ -170,20 +174,51 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
     );
   }
 
+  Widget _buildFilterChip(String label, String value) {
+    final isSelected = _selectedFilter == value;
+    final backgroundColor = value == 'income' 
+        ? AppColors.income 
+        : value == 'expense' 
+          ? AppColors.expense 
+          : AppColors.primary;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedFilter = value;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? backgroundColor.withOpacity(0.12) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? backgroundColor.withOpacity(0.3) : Colors.grey.shade300,
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? backgroundColor : Colors.grey.shade600,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTransactionItem(BuildContext context, TransactionModel transaction, TransactionProvider provider) {
+    final color = transaction.isExpense ? AppColors.expense : AppColors.income;
+    
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Row(
         children: [
@@ -191,33 +226,35 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.getCategoryColor(transaction.category).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              transaction.isExpense ? Icons.arrow_upward : Icons.arrow_downward,
-              color: AppColors.getCategoryColor(transaction.category),
+              transaction.isExpense ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+              color: color,
               size: 20,
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   transaction.title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   '${transaction.category} • ${transaction.formattedDate}',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey.shade600,
                   ),
                 ),
               ],
@@ -230,17 +267,17 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                 transaction.isExpense 
                   ? '-\$${transaction.amount.toStringAsFixed(2)}' 
                   : '+\$${transaction.amount.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                style: GoogleFonts.poppins(
                   fontSize: 16,
-                  color: transaction.isExpense ? AppColors.expense : AppColors.income,
+                  fontWeight: FontWeight.w600,
+                  color: color,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.edit, size: 18, color: Colors.grey),
+                    icon: const Icon(Icons.edit_rounded, size: 20, color: Colors.grey),
                     onPressed: () {
                       Navigator.pushNamed(
                         context,
@@ -250,7 +287,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                     },
                   ),
                   IconButton(
-                    icon: Icon(Icons.delete, size: 18, color: Colors.red),
+                    icon: const Icon(Icons.delete_rounded, size: 20, color: Colors.red),
                     onPressed: () {
                       _showDeleteDialog(context, transaction, provider);
                     },
@@ -268,12 +305,36 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Transaction'),
-        content: Text('Delete "${transaction.title}"?'),
+        title: Text(
+          'Delete Transaction',
+          style: GoogleFonts.poppins(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        content: Text(
+          'Delete "${transaction.title}"?',
+          style: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade600,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -281,12 +342,29 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Transaction deleted'),
+                  content: Text(
+                    'Transaction deleted',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               );
             },
-            child: Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: GoogleFonts.poppins(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Colors.red,
+              ),
+            ),
           ),
         ],
       ),

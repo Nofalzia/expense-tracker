@@ -12,10 +12,8 @@ class FirestoreService {
 
   // ==================== USER OPERATIONS ====================
 
-  // Get current user's transactions
-  Stream<List<TransactionModel>> getTransactionsStream() {
-    final userId = _auth.currentUser?.uid;
-    if (userId == null) {
+  Stream<List<TransactionModel>> getTransactionsStream(String userId) {
+    if (userId.isEmpty) {
       return Stream.value([]);
     }
 
@@ -31,9 +29,8 @@ class FirestoreService {
   }
 
   // Get transactions for a specific month
-  Stream<List<TransactionModel>> getTransactionsForMonth(DateTime month) {
-    final userId = _auth.currentUser?.uid;
-    if (userId == null) {
+  Stream<List<TransactionModel>> getTransactionsForMonth(String userId, DateTime month) {
+    if (userId.isEmpty) {
       return Stream.value([]);
     }
 
@@ -88,9 +85,8 @@ class FirestoreService {
   // ==================== ANALYTICS ====================
 
   // Get total income for a month
-  Future<double> getTotalIncomeForMonth(DateTime month) async {
-    final userId = _auth.currentUser?.uid;
-    if (userId == null) return 0.0;
+  Future<double> getTotalIncomeForMonth(String userId, DateTime month) async {
+    if (userId.isEmpty) return 0.0;
 
     final startOfMonth = DateTime(month.year, month.month, 1);
     final endOfMonth = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
@@ -111,9 +107,8 @@ class FirestoreService {
   }
 
   // Get total expenses for a month
-  Future<double> getTotalExpensesForMonth(DateTime month) async {
-    final userId = _auth.currentUser?.uid;
-    if (userId == null) return 0.0;
+  Future<double> getTotalExpensesForMonth(String userId, DateTime month) async {
+    if (userId.isEmpty) return 0.0;
 
     final startOfMonth = DateTime(month.year, month.month, 1);
     final endOfMonth = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
@@ -134,9 +129,8 @@ class FirestoreService {
   }
 
   // Get transactions by category
-  Future<Map<String, double>> getCategoryTotals(DateTime month) async {
-    final userId = _auth.currentUser?.uid;
-    if (userId == null) return {};
+  Future<Map<String, double>> getCategoryTotals(String userId, DateTime month) async {
+    if (userId.isEmpty) return {};
 
     final startOfMonth = DateTime(month.year, month.month, 1);
     final endOfMonth = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
