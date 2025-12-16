@@ -11,7 +11,7 @@ import 'package:expense_tracker/screens/analytics_screen.dart';
 import 'package:expense_tracker/screens/profile_screen.dart';
 import 'package:expense_tracker/providers/auth_provider.dart';
 import 'package:expense_tracker/providers/transaction_provider.dart';
-import 'package:expense_tracker/firebase_config.dart';
+import 'package:expense_tracker/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
